@@ -6,7 +6,7 @@ export enum Gender {
   FEMALE = "FEMALE",
 }
 
-export interface IPassenger extends Document {
+export interface IDriver extends Document {
   phone: string;
   fullName: string;
   email?: string;
@@ -14,7 +14,7 @@ export interface IPassenger extends Document {
   FCM_token?: string;
 }
 
-const PassengerSchema = new Schema<IPassenger>(
+const DriverSchema = new Schema<IDriver>(
   {
     phone: {
       type: String,
@@ -41,8 +41,8 @@ const PassengerSchema = new Schema<IPassenger>(
   }
 );
 
-const Passenger = model<IPassenger>(
-  "Passenger",
-  PassengerSchema
-) as SoftDeleteModel<IPassenger>;
-export default Passenger;
+const Driver = model<IDriver>(
+  "Driver",
+  DriverSchema
+) as SoftDeleteModel<IDriver>;
+export default Driver;

@@ -1,11 +1,11 @@
 import { Request } from "express";
 import { PassportStatic } from "passport";
 import { Strategy, ExtractJwt, VerifiedCallback } from "passport-jwt";
-import User, { IPassenger } from "../models/Passenger";
+import User, { IDriver } from "../models/Driver";
 
 declare global {
   namespace Express {
-    interface User extends IPassenger {}
+    interface User extends IDriver {}
   }
 }
 

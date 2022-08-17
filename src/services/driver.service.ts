@@ -1,11 +1,11 @@
 import { FilterQuery } from "mongoose";
 import { processFilterOptions } from "../commons/functions";
 import { CreateInput, FilterOptions, UpdateInput } from "../commons/interfaces";
-import User, { IPassenger } from "../models/Passenger";
+import User, { IDriver } from "../models/Driver";
 
 export async function isUserExist(options: {
-  id?: IPassenger["_id"];
-  phoneNumber?: IPassenger["_id"];
+  id?: IDriver["_id"];
+  phoneNumber?: IDriver["_id"];
 }): Promise<boolean> {
   try {
     let exists = await User.exists({
@@ -19,34 +19,34 @@ export async function isUserExist(options: {
 }
 
 export function getUsers(
-  filter: FilterQuery<IPassenger> = {},
-  options: Omit<FilterOptions<IPassenger>, "select"> = {}
+  filter: FilterQuery<IDriver> = {},
+  options: Omit<FilterOptions<IDriver>, "select"> = {}
 ) {
   let query = User.find(filter);
 
-  (options as FilterOptions<IPassenger>).select = "-password";
+  (options as FilterOptions<IDriver>).select = "-password";
   query = processFilterOptions(query, options);
 
   return query.lean();
 }
 
 export function getUser(
-  filter: FilterQuery<IPassenger> = {},
-  options: Omit<FilterOptions<IPassenger>, "select"> = {},
+  filter: FilterQuery<IDriver> = {},
+  options: Omit<FilterOptions<IDriver>, "select"> = {},
   includePassword: boolean = false
 ) {
   let query = User.findOne(filter);
 
   if (!includePassword)
-    (options as FilterOptions<IPassenger>).select = "-password";
+    (options as FilterOptions<IDriver>).select = "-password";
   query = processFilterOptions(query, options);
 
   return query.lean();
 }
 
 export async function createUser(
-  data: CreateInput<IPassenger>,
-  options: Omit<FilterOptions<IPassenger>, "select"> = {},
+  data: CreateInput<IDriver>,
+  options: Omit<FilterOptions<IDriver>, "select"> = {},
   includePassword: boolean = false
 ) {
   let user = await User.create(data);
@@ -54,9 +54,9 @@ export async function createUser(
 }
 
 export async function updateUser(
-  filter: FilterQuery<IPassenger>,
-  data: UpdateInput<IPassenger>,
-  options: Omit<FilterOptions<IPassenger>, "select"> = {},
+  filter: FilterQuery<IDriver>,
+  data: UpdateInput<IDriver>,
+  options: Omit<FilterOptions<IDriver>, "select"> = {},
   allowUpdatePhone: boolean = false,
   includePassword: boolean = false
 ) {
@@ -70,9 +70,9 @@ export async function updateUser(
 }
 
 export async function upsertUserByPhone(
-  filter: Pick<IPassenger, "phone">,
-  data: UpdateInput<IPassenger>,
-  options: Omit<FilterOptions<IPassenger>, "select"> = {},
+  filter: Pick<IDriver, "phone">,
+  data: UpdateInput<IDriver>,
+  options: Omit<FilterOptions<IDriver>, "select"> = {},
   includePassword: boolean = false
 ) {
   data.phone = filter.phone;
@@ -86,8 +86,8 @@ export async function upsertUserByPhone(
 }
 
 export async function deleteUser(
-  filter: FilterQuery<IPassenger>,
-  deleteBy: IPassenger["_id"],
+  filter: FilterQuery<IDriver>,
+  deleteBy: IDriver["_id"],
   includePassword: boolean = false
 ) {
   let user = await getUser(filter, {}, includePassword);
@@ -95,7 +95,7 @@ export async function deleteUser(
   return user;
 }
 
-export async function countUser(filter: FilterQuery<IPassenger>) {
+export async function countUser(filter: FilterQuery<IDriver>) {
   let count = await User.countDocuments(filter);
   return count;
 }

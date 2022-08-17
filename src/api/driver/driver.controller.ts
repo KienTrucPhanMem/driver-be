@@ -5,14 +5,14 @@ import {
   NotFoundResponse,
   SuccessResponse,
 } from "../../helpers/response";
-import { IPassenger } from "../../models/Passenger";
+import { IDriver } from "../../models/Driver";
 import {
   createUser,
   deleteUser,
   getUser,
   getUsers,
   updateUser,
-} from "../../services/passenger.service";
+} from "../../services/driver.service";
 
 const userController = {
   async get(_: Request, res: Response) {
@@ -47,7 +47,7 @@ const userController = {
   },
 
   async post(req: Request, res: Response) {
-    let data = req.body as IPassenger;
+    let data = req.body as IDriver;
 
     // Check & validate phone number
     if (!data.phone) {
@@ -73,7 +73,7 @@ const userController = {
     const { id } = req.params;
 
     try {
-      let data = req.body as IPassenger;
+      let data = req.body as IDriver;
 
       let updatedUser = await updateUser({ _id: id }, data);
       return SuccessResponse(res, updatedUser);
