@@ -12,6 +12,7 @@ export interface IDriver extends Document {
   email?: string;
   gender: Gender;
   FCM_token?: string;
+  role: "USER" | "DRIVER";
 }
 
 const DriverSchema = new Schema<IDriver>(
@@ -35,6 +36,7 @@ const DriverSchema = new Schema<IDriver>(
       default: Gender.MALE,
     },
     FCM_token: { type: String },
+    role: { type: String },
   },
   {
     timestamps: true,
