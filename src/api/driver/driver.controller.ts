@@ -82,7 +82,7 @@ const userController = {
         return acc;
       }, []);
 
-      axios.post(
+      await axios.post(
         "https://exp.host/--/api/v2/push/send",
         JSON.stringify({
           to: FCM_tokens,
