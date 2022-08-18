@@ -15,6 +15,7 @@ router.get(
 );
 
 router.post("/drivers", driverController.post);
+router.post("/drivers/booking", driverController.booking);
 
 router.put("/drivers/:id", driverController.put);
 

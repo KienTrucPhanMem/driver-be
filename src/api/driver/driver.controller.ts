@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Request, Response } from "express";
 import {
   BadRequestResponse,
@@ -64,6 +65,42 @@ const userController = {
 
       let user = await createUser(data);
       return SuccessResponse(res, user);
+    } catch (err: any) {
+      return ErrorResponse(res, err.message);
+    }
+  },
+
+  async booking(req: Request, res: Response) {
+    let data = req.body;
+
+    // Create user
+    try {
+      let drivers = await getUsers({ FCM_token: { $ne: undefined } });
+      const FCM_tokens = drivers.reduce((acc: string[], driver) => {
+        if (driver.FCM_token) acc.push(driver.FCM_token);
+
+        return acc;
+      }, []);
+
+      axios.post(
+        "https://exp.host/--/api/v2/push/send",
+        JSON.stringify({
+          to: FCM_tokens,
+          sound: "default",
+          title: "Original Title",
+          body: "And here is the body!",
+          data: data,
+        }),
+        {
+          headers: {
+            Accept: "application/json",
+            "Accept-encoding": "gzip, deflate",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return SuccessResponse(res, "ok");
     } catch (err: any) {
       return ErrorResponse(res, err.message);
     }
