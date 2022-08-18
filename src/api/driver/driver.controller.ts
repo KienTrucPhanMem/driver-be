@@ -1,6 +1,9 @@
 import axios from "axios";
 import { Request, Response } from "express";
-import { createPassengerRequest } from "../../services/passengerRequest.service";
+import {
+  createPassengerRequest,
+  updatePassengerRequest,
+} from "../../services/passengerRequest.service";
 import {
   BadRequestResponse,
   ErrorResponse,
@@ -15,6 +18,7 @@ import {
   getUsers,
   updateUser,
 } from "../../services/driver.service";
+import { RequestStatus } from "../../models/PassengerRequest";
 
 const userController = {
   async get(_: Request, res: Response) {
@@ -116,6 +120,41 @@ const userController = {
       let data = req.body as IDriver;
 
       let updatedUser = await updateUser({ _id: id }, data);
+      return SuccessResponse(res, updatedUser);
+    } catch (err: any) {
+      return ErrorResponse(res, err.message);
+    }
+  },
+
+  async acceptBooking(req: Request, res: Response) {
+    const { driverId, bookingId } = req.body as any;
+
+    try {
+      let updatedUser = await updatePassengerRequest(
+        { _id: bookingId },
+        {
+          driverId,
+          status: RequestStatus.ACCEPTED,
+        }
+      );
+
+      return SuccessResponse(res, updatedUser);
+    } catch (err: any) {
+      return ErrorResponse(res, err.message);
+    }
+  },
+
+  async doneBooking(req: Request, res: Response) {
+    const { bookingId } = req.body as any;
+
+    try {
+      let updatedUser = await updatePassengerRequest(
+        { _id: bookingId },
+        {
+          status: RequestStatus.DONE,
+        }
+      );
+
       return SuccessResponse(res, updatedUser);
     } catch (err: any) {
       return ErrorResponse(res, err.message);
