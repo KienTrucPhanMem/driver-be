@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Request, Response } from "express";
+import { createPassengerRequest } from "../../services/passengerRequest.service";
 import {
   BadRequestResponse,
   ErrorResponse,
@@ -75,6 +76,8 @@ const userController = {
 
     // Create user
     try {
+      let booking = await createPassengerRequest(data);
+
       let drivers = await getUsers({ FCM_token: { $ne: null as any } });
       const FCM_tokens = drivers.reduce((acc: string[], driver) => {
         if (driver.FCM_token) acc.push(driver.FCM_token);
@@ -89,7 +92,7 @@ const userController = {
           sound: "default",
           title: "Original Title",
           body: "And here is the body!",
-          data: data,
+          data: booking,
         }),
         {
           headers: {
