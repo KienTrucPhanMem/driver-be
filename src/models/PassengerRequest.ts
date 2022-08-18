@@ -19,11 +19,13 @@ export interface IPassengerRequest extends Document {
   from: IAddress;
   to: IAddress;
   status: RequestStatus;
+  driverId?: string;
 }
 
 const PassengerRequestSchema = new Schema<IPassengerRequest>(
   {
     passengerId: { type: String, required: true },
+    driverId: { type: String },
     from: { type: Schema.Types.Mixed, required: true },
     to: { type: Schema.Types.Mixed, required: true },
     status: {
