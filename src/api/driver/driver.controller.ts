@@ -138,6 +138,11 @@ const userController = {
         }
       );
 
+      await axios.post(
+        "https://ktpm-user.herokuapp.com/api/passengers/push-notification",
+        updatedUser
+      );
+
       return SuccessResponse(res, updatedUser);
     } catch (err: any) {
       return ErrorResponse(res, err.message);
@@ -153,6 +158,11 @@ const userController = {
         {
           status: RequestStatus.DONE,
         }
+      );
+
+      await axios.post(
+        "https://ktpm-user.herokuapp.com/api/passengers/push-notification",
+        updatedUser
       );
 
       return SuccessResponse(res, updatedUser);
