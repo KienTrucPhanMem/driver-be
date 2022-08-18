@@ -75,7 +75,7 @@ const userController = {
 
     // Create user
     try {
-      let drivers = await getUsers({ FCM_token: { $ne: undefined } });
+      let drivers = await getUsers({ FCM_token: { $ne: null as any } });
       const FCM_tokens = drivers.reduce((acc: string[], driver) => {
         if (driver.FCM_token) acc.push(driver.FCM_token);
 
