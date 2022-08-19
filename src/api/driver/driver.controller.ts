@@ -145,14 +145,18 @@ const userController = {
         }
       );
 
+      console.log(1);
+
       await axios.post(
         "https://ktpm-user.herokuapp.com/api/passengers/push-notification",
         updatedUser
       );
 
+      console.log(2);
+
       return SuccessResponse(res, updatedUser);
     } catch (err: any) {
-      return ErrorResponse(res, err.message);
+      return ErrorResponse(res, err);
     }
   },
 
