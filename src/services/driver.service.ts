@@ -66,7 +66,9 @@ export async function updateUser(
     new: true,
     lean: true,
   });
-  return getUser({ _id: user._id }, options, includePassword);
+
+  if (user) return getUser({ _id: user._id }, options, includePassword);
+  else return null;
 }
 
 export async function upsertUserByPhone(
