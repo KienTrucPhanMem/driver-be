@@ -156,6 +156,7 @@ const userController = {
 
       return SuccessResponse(res, updatedUser);
     } catch (err: any) {
+      console.log(err);
       return ErrorResponse(res, err);
     }
   },
