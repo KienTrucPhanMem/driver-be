@@ -2,6 +2,7 @@ import axios from "axios";
 import { Request, Response } from "express";
 import {
   createPassengerRequest,
+  getPassengerRequest,
   updatePassengerRequest,
 } from "../../services/passengerRequest.service";
 import {
@@ -130,6 +131,12 @@ const userController = {
     const { driverId, bookingId } = req.body as any;
 
     try {
+      const booking = await getPassengerRequest({ _id: bookingId });
+
+      if (booking && booking.status !== RequestStatus.FINDING) {
+        return BadRequestResponse(res, "Invalid status");
+      }
+
       let updatedUser = await updatePassengerRequest(
         { _id: bookingId },
         {
