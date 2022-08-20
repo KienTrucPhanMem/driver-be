@@ -91,6 +91,7 @@ const userController = {
       }, []);
 
       console.log(1);
+      console.log(FCM_tokens);
 
       await axios.post(
         "https://exp.host/--/api/v2/push/send",
