@@ -90,6 +90,8 @@ const userController = {
         return acc;
       }, []);
 
+      console.log(1);
+
       await axios.post(
         "https://exp.host/--/api/v2/push/send",
         JSON.stringify({
@@ -108,8 +110,11 @@ const userController = {
         }
       );
 
+      console.log(2);
+
       return SuccessResponse(res, "ok");
     } catch (err: any) {
+      console.log(err);
       return ErrorResponse(res, err.message);
     }
   },
