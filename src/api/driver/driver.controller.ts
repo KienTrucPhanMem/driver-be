@@ -20,6 +20,7 @@ import {
   updateUser,
 } from "../../services/driver.service";
 import { RequestStatus } from "../../models/PassengerRequest";
+import { getDistanceFromLatLonInKm } from "../../helpers";
 
 const userController = {
   async get(_: Request, res: Response) {
@@ -83,15 +84,34 @@ const userController = {
     try {
       let booking = await createPassengerRequest(data);
 
-      let drivers = await getUsers({ FCM_token: { $ne: null as any } });
+      let drivers = await getUsers({
+        FCM_token: { $ne: null as any },
+        isActive: true,
+      });
+
+      let distance = 0.5;
+
+      do {
+        drivers = drivers.filter(
+          (driver) =>
+            getDistanceFromLatLonInKm(
+              Number(driver.latitude) as any,
+              Number(driver.longitude) as any,
+              Number(booking?.from.latitude) as any,
+              Number(booking?.from.longitude) as any
+            ) <= distance
+        );
+
+        distance += 0.5;
+
+        if (distance > 5) break;
+      } while (drivers.length <= 0);
+
       const FCM_tokens = drivers.reduce((acc: string[], driver) => {
         if (driver.FCM_token) acc.push(driver.FCM_token);
 
         return acc;
       }, []);
-
-      console.log(1);
-      console.log(FCM_tokens);
 
       await axios.post(
         "https://exp.host/--/api/v2/push/send",
@@ -110,8 +130,6 @@ const userController = {
           },
         }
       );
-
-      console.log(2);
 
       return SuccessResponse(res, "ok");
     } catch (err: any) {

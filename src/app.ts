@@ -3,6 +3,7 @@ import express from "express";
 import morgan from "morgan";
 import passport from "passport";
 import path from "path";
+import { socket } from "./configs/socket";
 import router from "./routes";
 
 /* ENV */
@@ -40,8 +41,10 @@ router(app);
 require("./configs/db")();
 
 /* START SERVER */
-app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, () => {
   console.log(
     `Server running in ${process.env.NODE_ENV} mode at http://${HOST}:${PORT}`
   );
 });
+
+socket(server);
