@@ -1,3 +1,6 @@
+import axios from "axios";
+import { getUsers } from "src/services/driver.service";
+import { createPassengerRequest } from "src/services/passengerRequest.service";
 import moment from "../configs/moment";
 
 export function foreach<T>(
@@ -168,4 +171,34 @@ export function generateUniqueString(): string {
   }
 
   return out.toUpperCase();
+}
+
+export async function booking(data: any) {
+  // Create user
+  let booking = await createPassengerRequest(data);
+
+  let drivers = await getUsers({ FCM_token: { $ne: null as any } });
+  const FCM_tokens = drivers.reduce((acc: string[], driver) => {
+    if (driver.FCM_token) acc.push(driver.FCM_token);
+
+    return acc;
+  }, []);
+
+  await axios.post(
+    "https://exp.host/--/api/v2/push/send",
+    JSON.stringify({
+      to: FCM_tokens,
+      sound: "default",
+      title: "Original Title",
+      body: "And here is the body!",
+      data: booking,
+    }),
+    {
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+    }
+  );
 }

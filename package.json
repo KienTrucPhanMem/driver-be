@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^0.10.2",
     "aws-sdk": "^2.1044.0",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
