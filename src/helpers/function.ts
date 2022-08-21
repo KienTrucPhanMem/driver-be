@@ -1,6 +1,6 @@
 import axios from "axios";
-import { getUsers } from "src/services/driver.service";
-import { createPassengerRequest } from "src/services/passengerRequest.service";
+import { getUsers } from "../services/driver.service";
+import { createPassengerRequest } from "../services/passengerRequest.service";
 import moment from "../configs/moment";
 
 export function foreach<T>(
@@ -173,32 +173,79 @@ export function generateUniqueString(): string {
   return out.toUpperCase();
 }
 
+function deg2rad(deg: number) {
+  return deg * (Math.PI / 180);
+}
+
+export function getDistanceFromLatLonInKm(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+) {
+  const R = 6371; // Radius of the earth in km
+  const dLat = deg2rad(lat2 - lat1); // deg2rad below
+  const dLon = deg2rad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) *
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const d = R * c; // Distance in km
+  return d;
+}
+
 export async function booking(data: any) {
   // Create user
-  let booking = await createPassengerRequest(data);
+  try {
+    let booking = await createPassengerRequest(data);
+    let drivers = await getUsers({
+      FCM_token: { $ne: null as any },
+      isActive: true,
+    });
+    let distance = 0.5;
 
-  let drivers = await getUsers({ FCM_token: { $ne: null as any } });
-  const FCM_tokens = drivers.reduce((acc: string[], driver) => {
-    if (driver.FCM_token) acc.push(driver.FCM_token);
+    do {
+      drivers = drivers.filter(
+        (driver) =>
+          getDistanceFromLatLonInKm(
+            Number(driver.latitude) as any,
+            Number(driver.longitude) as any,
+            Number(booking?.from.latitude) as any,
+            Number(booking?.from.longitude) as any
+          ) <= distance
+      );
+      distance += 0.5;
 
-    return acc;
-  }, []);
+      if (distance > 5) break;
+    } while (drivers.length <= 0);
 
-  await axios.post(
-    "https://exp.host/--/api/v2/push/send",
-    JSON.stringify({
-      to: FCM_tokens,
-      sound: "default",
-      title: "Original Title",
-      body: "And here is the body!",
-      data: booking,
-    }),
-    {
-      headers: {
-        Accept: "application/json",
-        "Accept-encoding": "gzip, deflate",
-        "Content-Type": "application/json",
-      },
+    const FCM_tokens = drivers.reduce((acc: string[], driver) => {
+      if (driver.FCM_token) acc.push(driver.FCM_token);
+      return acc;
+    }, []);
+    if (FCM_tokens.length > 0) {
+      await axios.post(
+        "https://exp.host/--/api/v2/push/send",
+        JSON.stringify({
+          to: FCM_tokens,
+          sound: "default",
+          title: "KTPM Driver",
+          body: "Có khách đặt xe",
+          data: booking,
+        }),
+        {
+          headers: {
+            Accept: "application/json",
+            "Accept-encoding": "gzip, deflate",
+            "Content-Type": "application/json",
+          },
+        }
+      );
     }
-  );
+  } catch (error: any) {
+    console.log(error.message);
+  }
 }

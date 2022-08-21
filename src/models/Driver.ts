@@ -12,6 +12,9 @@ export interface IDriver extends Document {
   email?: string;
   gender: Gender;
   FCM_token?: string;
+  isActive: boolean;
+  longitude?: string;
+  latitude?: string;
   role: "USER" | "DRIVER";
 }
 
@@ -37,6 +40,9 @@ const DriverSchema = new Schema<IDriver>(
     },
     FCM_token: { type: String },
     role: { type: String },
+    isActive: { type: Boolean, default: false },
+    longitude: { type: String },
+    latitude: { type: String },
   },
   {
     timestamps: true,

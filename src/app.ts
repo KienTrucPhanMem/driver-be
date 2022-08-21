@@ -3,8 +3,9 @@ import express from "express";
 import morgan from "morgan";
 import passport from "passport";
 import path from "path";
+import { socket } from "./configs/socket";
 import router from "./routes";
-var amqp = require('amqplib/callback_api');
+var amqp = require("amqplib/callback_api");
 /* ENV */
 require("dotenv").config();
 
@@ -43,8 +44,10 @@ require("./configs/db")();
 require("./configs/rabbitMQ")(amqp);
 
 /* START SERVER */
-app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, () => {
   console.log(
     `Server running in ${process.env.NODE_ENV} mode at http://${HOST}:${PORT}`
   );
 });
+
+socket(server);

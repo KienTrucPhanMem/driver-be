@@ -1,5 +1,4 @@
-
-
+import { booking } from "../helpers/function";
 
 const connectRabbitMQ = async (amqp: any) => {
     amqp.connect('amqps://lbyjdacl:whjFKganLPxFsFeyzYA_ipgVkergjEmH@armadillo.rmq.cloudamqp.com/lbyjdacl', function(error0: any, connection: any) {
@@ -19,8 +18,9 @@ const connectRabbitMQ = async (amqp: any) => {
     
             console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
     
-            channel.consume(queue, function(msg: any) {
+            channel.consume(queue, async function(msg: any) {
                 console.log(" [x] Received %s", msg.content.toString());
+                await booking(JSON.parse(msg.content.toString()));
             }, {
                 noAck: true
             });
