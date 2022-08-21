@@ -22,6 +22,10 @@ export const socket = (server: ServerHTTP) => {
         await updateUser({ _id: userId }, { isActive: false });
       });
 
+      socket.on("stop", async () => {
+        await updateUser({ _id: userId }, { isActive: false });
+      });
+
       socket.on("update-location", async ({ longitude, latitude }) => {
         await updateUser({ _id: userId }, { longitude, latitude });
       });
