@@ -169,8 +169,6 @@ const userController = {
         }
       );
 
-      console.log(1);
-
       await axios.post(
         "https://ktpm-user.herokuapp.com/api/passengers/push-notification",
         updatedUser
@@ -203,6 +201,73 @@ const userController = {
 
       return SuccessResponse(res, updatedUser);
     } catch (err: any) {
+      return ErrorResponse(res, err.message);
+    }
+  },
+
+  async cancelBooking(req: Request, res: Response) {
+    const { bookingId, driverId } = req.body as any;
+
+    try {
+      let drivers = await getUsers({
+        FCM_token: { $ne: null as any },
+        isActive: true,
+        _id: { $ne: driverId },
+      });
+      let booking = await getPassengerRequest({ _id: bookingId });
+
+      let distance = 0.5;
+
+      do {
+        drivers = drivers.filter(
+          (driver) =>
+            getDistanceFromLatLonInKm(
+              Number(driver.latitude) as any,
+              Number(driver.longitude) as any,
+              Number(booking?.from.latitude) as any,
+              Number(booking?.from.longitude) as any
+            ) <= distance
+        );
+
+        distance += 0.5;
+
+        if (distance > 5) break;
+      } while (drivers.length <= 0);
+
+      const FCM_tokens = drivers.reduce((acc: string[], driver) => {
+        if (driver.FCM_token) acc.push(driver.FCM_token);
+
+        return acc;
+      }, []);
+
+      await axios.post(
+        "https://exp.host/--/api/v2/push/send",
+        JSON.stringify({
+          to: FCM_tokens,
+          sound: "default",
+          title: "Original Title",
+          body: "And here is the body!",
+          data: booking,
+        }),
+        {
+          headers: {
+            Accept: "application/json",
+            "Accept-encoding": "gzip, deflate",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      await axios.post(
+        "https://ktpm-user.herokuapp.com/api/passengers/push-notification",
+        {
+          code: "DRIVER_CANCEL",
+        }
+      );
+
+      return SuccessResponse(res, "ok");
+    } catch (err: any) {
+      console.log(err);
       return ErrorResponse(res, err.message);
     }
   },

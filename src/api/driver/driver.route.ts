@@ -19,6 +19,7 @@ router.post("/drivers/booking", driverController.booking);
 
 router.put("/drivers/accept", driverController.acceptBooking);
 router.put("/drivers/done", driverController.doneBooking);
+router.put("/drivers/cancel", driverController.cancelBooking);
 router.put("/drivers/:id", driverController.put);
 
 router.delete("/drivers/:id", driverController.delete);
