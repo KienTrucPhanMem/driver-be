@@ -1,3 +1,6 @@
+import axios from "axios";
+import { getUsers } from "../services/driver.service";
+import { createPassengerRequest } from "../services/passengerRequest.service";
 import moment from "../configs/moment";
 
 export function foreach<T>(
@@ -192,4 +195,57 @@ export function getDistanceFromLatLonInKm(
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const d = R * c; // Distance in km
   return d;
+}
+
+export async function booking(data: any) {
+  // Create user
+  try {
+    let booking = await createPassengerRequest(data);
+    let drivers = await getUsers({
+      FCM_token: { $ne: null as any },
+      isActive: true,
+    });
+    let distance = 0.5;
+
+    do {
+      drivers = drivers.filter(
+        (driver) =>
+          getDistanceFromLatLonInKm(
+            Number(driver.latitude) as any,
+            Number(driver.longitude) as any,
+            Number(booking?.from.latitude) as any,
+            Number(booking?.from.longitude) as any
+          ) <= distance
+      );
+      distance += 0.5;
+
+      if (distance > 5) break;
+    } while (drivers.length <= 0);
+
+    const FCM_tokens = drivers.reduce((acc: string[], driver) => {
+      if (driver.FCM_token) acc.push(driver.FCM_token);
+      return acc;
+    }, []);
+    if (FCM_tokens.length > 0) {
+      await axios.post(
+        "https://exp.host/--/api/v2/push/send",
+        JSON.stringify({
+          to: FCM_tokens,
+          sound: "default",
+          title: "KTPM Driver",
+          body: "Có khách đặt xe",
+          data: booking,
+        }),
+        {
+          headers: {
+            Accept: "application/json",
+            "Accept-encoding": "gzip, deflate",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+  } catch (error: any) {
+    console.log(error.message);
+  }
 }
