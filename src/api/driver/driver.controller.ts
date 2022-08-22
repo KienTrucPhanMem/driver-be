@@ -171,7 +171,12 @@ const userController = {
 
       await axios.post(
         "https://ktpm-user.herokuapp.com/api/passengers/push-notification",
-        updatedUser
+        {
+          ...updatedUser,
+          passengerId: booking?.passengerId,
+          title: "Đã có tài xế",
+          body: "Vui lòng chờ tài xế đến",
+        }
       );
 
       console.log(2);
@@ -196,7 +201,10 @@ const userController = {
 
       await axios.post(
         "https://ktpm-user.herokuapp.com/api/passengers/push-notification",
-        updatedUser
+        {
+          ...updatedUser,
+          passengerId: updatedUser?.passengerId,
+        }
       );
 
       return SuccessResponse(res, updatedUser);
