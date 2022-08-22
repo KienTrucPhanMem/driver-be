@@ -5,14 +5,14 @@ import passport from "passport";
 import path from "path";
 import { socket } from "./configs/socket";
 import router from "./routes";
-
+var amqp = require("amqplib/callback_api");
 /* ENV */
 require("dotenv").config();
 
 /* CONSTANT */
 const app = express();
 const HOST: string = process.env.HOST || "0.0.0.0";
-const PORT: number = +(process.env.PORT || 8000);
+const PORT: number = +(process.env.PORT || 8001);
 
 /* LOGGING */
 if (process.env.NODE_ENV === "development") {
@@ -39,6 +39,9 @@ router(app);
 
 /* CONNECT TO DB */
 require("./configs/db")();
+
+/* CONNECT TO RABBITMQ */
+require("./configs/rabbitMQ")(amqp);
 
 /* START SERVER */
 const server = app.listen(PORT, HOST, () => {
