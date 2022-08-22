@@ -240,28 +240,33 @@ const userController = {
         return acc;
       }, []);
 
-      await axios.post(
-        "https://exp.host/--/api/v2/push/send",
-        JSON.stringify({
-          to: FCM_tokens,
-          sound: "default",
-          title: "Original Title",
-          body: "And here is the body!",
-          data: booking,
-        }),
-        {
-          headers: {
-            Accept: "application/json",
-            "Accept-encoding": "gzip, deflate",
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      if (FCM_tokens.length > 0) {
+        await axios.post(
+          "https://exp.host/--/api/v2/push/send",
+          JSON.stringify({
+            to: FCM_tokens,
+            sound: "default",
+            title: "Original Title",
+            body: "And here is the body!",
+            data: booking,
+          }),
+          {
+            headers: {
+              Accept: "application/json",
+              "Accept-encoding": "gzip, deflate",
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
 
       await axios.post(
         "https://ktpm-user.herokuapp.com/api/passengers/push-notification",
         {
           code: "DRIVER_CANCEL",
+          passengerId: booking?.passengerId,
+          title: "Tài xế huỷ chiến",
+          body: "Vui lòng chờ ...",
         }
       );
 
