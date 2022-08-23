@@ -157,11 +157,7 @@ const userController = {
     try {
       const booking = await getPassengerRequest({ _id: bookingId });
 
-      if (
-        booking &&
-        booking.status !== RequestStatus.FINDING &&
-        booking.status !== RequestStatus.ACCEPTED
-      ) {
+      if (booking && booking.status !== RequestStatus.FINDING) {
         return BadRequestResponse(res, "Invalid status");
       }
 
@@ -229,6 +225,11 @@ const userController = {
         _id: { $ne: driverId },
       });
       let booking = await getPassengerRequest({ _id: bookingId });
+
+      await updatePassengerRequest(
+        { _id: bookingId },
+        { status: RequestStatus.FINDING }
+      );
 
       let distance = 0.5;
 
