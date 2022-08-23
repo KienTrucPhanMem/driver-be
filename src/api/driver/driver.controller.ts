@@ -208,6 +208,8 @@ const userController = {
         {
           ...updatedUser,
           passengerId: updatedUser?.passengerId,
+          title: "Hoàn thành",
+          body: "Cảm ơn bạn đã sử dụng dịch vụ",
         }
       );
 
