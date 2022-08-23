@@ -261,8 +261,8 @@ const userController = {
           JSON.stringify({
             to: FCM_tokens,
             sound: "default",
-            title: "Original Title",
-            body: "And here is the body!",
+            title: "KTPM Driver",
+            body: "Có khách đặt xe",
             data: booking,
           }),
           {
