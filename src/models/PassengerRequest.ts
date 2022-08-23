@@ -20,6 +20,7 @@ export interface IPassengerRequest extends Document {
   to: IAddress;
   status: RequestStatus;
   driverId?: string;
+  cost: number;
 }
 
 const PassengerRequestSchema = new Schema<IPassengerRequest>(
@@ -32,6 +33,9 @@ const PassengerRequestSchema = new Schema<IPassengerRequest>(
       type: Number,
       enum: RequestStatus,
       default: RequestStatus.FINDING,
+    },
+    cost: {
+      type: Number,
     },
   },
   {
