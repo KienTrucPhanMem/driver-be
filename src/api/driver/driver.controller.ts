@@ -157,7 +157,11 @@ const userController = {
     try {
       const booking = await getPassengerRequest({ _id: bookingId });
 
-      if (booking && booking.status !== RequestStatus.FINDING) {
+      if (
+        booking &&
+        booking.status !== RequestStatus.FINDING &&
+        booking.status !== RequestStatus.ACCEPTED
+      ) {
         return BadRequestResponse(res, "Invalid status");
       }
 
