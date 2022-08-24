@@ -14,7 +14,7 @@ export function validateToken(role: string) {
 
         //Validate by role
         const res = await axios.post(
-          "http://localhost:8001/api/validate-token",
+          "https://ktpm-gateway.herokuapp.com/auth/validate-token",
           { token }
         );
 
